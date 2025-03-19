@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Quota List</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        /* Header Styling */
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #2c3e50;
+        }
+
+        /* Table Styling */
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            margin-top: 40px;
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        td {
+            background-color: #ecf0f1;
+        }
+
+        /* Styling for Edit Button */
+        .edit-btn {
+            padding: 8px 16px;
+            background-color: #e67e22;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .edit-btn:hover {
+            background-color: #d35400;
+        }
+
+        /* Message when no leave quotas are available */
+        .no-quotas {
+            text-align: center;
+            font-size: 18px;
+            color: #888;
+        }
+
+        /* Button to Add Leave Quota */
+        .apply-btn {
+            display: block;
+            width: 200px;
+            margin: 20px ;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .apply-btn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+ 
+    
+    <!-- Add Leave Quota Button -->
+    
+    <!-- Display Leave Quota Table -->
+    {% if leave_quotas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Point No.</th> <!-- Added Point No. Column -->
+                    <th>Employee Name</th>
+                    <th>SL Quota</th>
+                    <th>PL Quota</th>
+                    <th>CL Quota</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quota in leave_quotas %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td> <!-- Displaying Point No. -->
+                        <td>{{ quota.employee.name }}</td>
+                        <td>{{ quota.sl_quota }}</td>
+                        <td>{{ quota.pl_quota }}</td>
+                        <td>{{ quota.cl_quota }}</td>
+                        <td><a href="{% url 'edit_leave_quota' quota.pk %}" class="edit-btn">Edit</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-quotas">No leave quotas available.</p>
+    {% endif %}
+
+</body>
+</html>

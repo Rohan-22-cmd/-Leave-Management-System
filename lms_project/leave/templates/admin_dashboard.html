@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        /* Table for admin leave management */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        td {
+            background-color: #ecf0f1;
+        }
+
+        .approved {
+            color: green;
+            font-weight: bold;
+        }
+
+        .pending {
+            color: orange;
+            font-weight: bold;
+        }
+
+        .rejected {
+            color: red;
+            font-weight: bold;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            background-color: #e67e22;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .approve-btn {
+            background-color: #2ecc71;
+        }
+
+        .reject-btn {
+            background-color: #e74c3c;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>Admin Dashboard</h2>
+
+    <!-- Leave Management Table -->
+    {% if leaves %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Employee Name</th>
+                    <th>Leave Reason</th>
+                    <th>Leave Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ leave.employee.name }}</td>
+                        <td>{{ leave.reason }}</td>
+                        <td>{{ leave.get_leave_type_display }}</td>
+                        <td>{{ leave.start_date|date:"d-m-Y" }}</td>
+                        <td>{{ leave.end_date|date:"d-m-Y" }}</td>
+                        <td class="{% if leave.status == 'approved' %}approved{% elif leave.status == 'rejected' %}rejected{% else %}pending{% endif %}">
+                            {{ leave.get_status_display }}
+                        </td>
+                        <td>
+                            {% if leave.status == 'pending' %}
+                                <a href="{% url 'approve_leave' leave.id %}" class="action-btn approve-btn">Approve</a>
+                                <a href="{% url 'reject_leave' leave.id %}" class="action-btn reject-btn">Reject</a>
+                            {% else %}
+                                <span>Action not allowed</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No leave requests found.</p>
+    {% endif %}
+
+</body>
+</html>

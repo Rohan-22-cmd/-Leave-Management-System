@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <style>
+        /* General Body Styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        /* Header Styling */
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+            color: #2c3e50;
+        }
+
+        h3 {
+            color: #34495e;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Flex container for leave balances */
+        .leave-balances {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px; /* Space between the balance boxes */
+            margin-bottom: 30px;
+            padding: 10px;
+        }
+
+        /* Styling for each leave balance box */
+        .leave-box {
+            padding: 20px;
+            border-radius: 8px;
+            width: 30%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Conditional background colors */
+        .pl.no-leave {
+            background-color: #e74c3c; /* Red for no PL left */
+        }
+
+        .pl.has-leave {
+            background-color: #3498db; /* Blue for PL remaining */
+        }
+
+        .cl.no-leave {
+            background-color: #e74c3c; /* Red for no CL left */
+        }
+
+        .cl.has-leave {
+            background-color: #2ecc71; /* Green for CL remaining */
+        }
+
+        .sl.no-leave {
+            background-color: #e74c3c; /* Red for no SL left */
+        }
+
+        .sl.has-leave {
+            background-color: #f39c12; /* Yellow for SL remaining */
+        }
+
+        /* Styling the Apply for Leave button */
+        .apply-btn {
+            display: block;
+            width: 200px;
+            margin: 20px ;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            text-align: center;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling the Leave Table */
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            margin-top: 40px;
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        td {
+            background-color: #ecf0f1;
+        }
+
+        /* Styling the Status Column */
+        .approved {
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .pending {
+            color: #f39c12;
+            font-weight: bold;
+        }
+
+        /* Styling the "Edit" Button */
+        .edit-btn {
+            padding: 8px 16px;
+            background-color: #e67e22;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .edit-btn:hover {
+            background-color: #d35400;
+        }
+
+        /* Disabled button styling */
+        .edit-btn[disabled] {
+            background-color: gray;
+            cursor: not-allowed;
+        }
+
+        /* Message when no leaves are available */
+        .no-leaves {
+            text-align: center;
+            font-size: 18px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    
+
+    <!-- Leave Balances Section with Flexbox -->
+    <div class="leave-balances">
+        <!-- PL Balance -->
+        <div class="leave-box pl {% if leave_balance.PL <= 0 %}no-leave{% else %}has-leave{% endif %}">
+            <p>PL: {{ leave_balance.PL }}</p>
+        </div>
+        
+        <!-- CL Balance -->
+        <div class="leave-box cl {% if leave_balance.CL <= 0 %}no-leave{% else %}has-leave{% endif %}">
+            <p>CL: {{ leave_balance.CL }} </p>
+        </div>
+
+        <!-- SL Balance -->
+        <div class="leave-box sl {% if leave_balance.SL <= 0 %}no-leave{% else %}has-leave{% endif %}">
+            <p>SL: {{ leave_balance.SL }} </p>
+        </div>
+    </div>
+
+    <!-- Apply leave button -->
+    <a href="{% url 'apply_leave' %}" class="apply-btn">Apply Leave</a>
+
+    <!-- Display Leave Table -->
+    {% if leaves %}
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Leave Reason</th>
+                    <th>Leave Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Status</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for leave in leaves %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td> <!-- Serial number -->
+                        <td>{{ leave.reason }}</td> <!-- Leave reason -->
+                        <td>{{ leave.get_leave_type_display }}</td> <!-- Leave type -->
+                        <td>{{ leave.start_date|date:"d-m-Y" }}</td> <!-- Start date -->
+                        <td>{{ leave.end_date|date:"d-m-Y" }}</td> <!-- End date -->
+                        <td class="{% if leave.status == 'approved' %}approved{% else %}pending{% endif %}">
+                            {{ leave.get_status_display }}
+                        </td> <!-- Status with dynamic color -->
+                        <td>
+                            <a href="{% url 'edit_leave' leave.id %}" class="edit-btn">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-leaves">You have no leaves applied yet.</p>
+    {% endif %}
+
+    <br>
+    <!-- Add Report Button -->
+    <a href="{% url 'add_report' %}" class="apply-btn">Add Level Quota</a>
+
+    <!-- Display Reports Table -->
+    {% if reports %}
+       
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Reportee Name</th>
+                    <th>Leave Reason</th>
+                    <th>Leave Type</th>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Status</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ report.reportee_name }}</td>
+                        <td>{{ report.reason }}</td>
+                        <td>{{ report.get_leave_type_display }}</td>
+                        <td>{{ report.start_date|date:"d-m-Y" }}</td>
+                        <td>{{ report.end_date|date:"d-m-Y" }}</td>
+                        <td class="{% if report.status == 'approved' %}approved{% else %}pending{% endif %}">
+                            {{ report.get_status_display }}
+                        </td>
+                        <td>
+                            <a href="{% url 'edit_report' report.id %}" class="edit-btn">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-leaves">You have no reports yet.</p>
+    {% endif %}
+    
+    <a href="{% url 'leave_quota_list' %}" class="apply-btn">Leave Quota functionality</a>
+
+    <!-- Display Leave Quota Table -->
+    {% if LeaveQuotas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Employee</th>
+                    <th>SL Quota</th>
+                    <th>PL Quota</th>
+                    <th>CL Quota</th>
+                    <th>Edit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for quota in LeaveQuotas %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ quota.employee.name }}</td>
+                        <td>{{ quota.sl_quota }}</td>
+                        <td>{{ quota.pl_quota }}</td>
+                        <td>{{ quota.cl_quota }}</td>
+                        <td>
+                            <a href="{% url 'edit_leave_quota' quota.id %}" class="edit-btn">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-leaves">No Leave Quotas available.</p>
+    {% endif %}
+</body>
+</html>

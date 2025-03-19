@@ -1,0 +1,33 @@
+<form method="POST">
+    {% csrf_token %}
+    <div>
+        <label for="leave_type">reportee name :</label>
+        {{ form.reportee_name  }}  <!-- Leave type field -->
+    </div>
+    <div>
+        <label for="leave_type">Leave Type:</label>
+        {{ form.leave_type }}  <!-- Leave type field -->
+    </div>
+
+    <div>
+        <label for="reason">Reason for Leave:</label>
+        {{ form.reason }}  <!-- Reason field -->
+    </div>
+
+    <div>
+        <label for="start_date">Start Date:</label>
+        {{ form.start_date }}  <!-- Start date field -->
+    </div>
+
+    <div>
+        <label for="end_date">End Date:</label>
+        {{ form.end_date }}  <!-- End date field -->
+    </div>
+
+    <div>
+        <label for="status">Leave Status:</label>
+        {{ form.status }}  <!-- Status dropdown -->
+    </div>
+
+    <button type="submit">Save Changes</button>
+</form>

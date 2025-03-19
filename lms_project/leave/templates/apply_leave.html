@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apply for Leave</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 40px;
+            color: #4CAF50;
+        }
+
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 12px 0 6px;
+            font-weight: bold;
+        }
+
+        select, textarea, input[type="date"], button {
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+            padding: 12px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Apply for Leave</h2>
+
+    <div class="container">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="leave_type">Select Leave Type</label>
+                <select name="leave_type" id="leave_type" required>
+                    <option value="PL">PL</option>
+                    <option value="CL">CL</option>
+                    <option value="SL">SL</option>
+                    <option value="LWP">LWP</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="reason">Reason for Leave</label>
+                <textarea name="reason" id="reason" required placeholder="Enter the reason for your leave..."></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="start_date">From</label>
+                <input type="date" name="start_date" id="start_date" required>
+            </div>
+
+            <div class="form-group">
+                <label for="end_date">To</label>
+                <input type="date" name="end_date" id="end_date" required>
+            </div>
+
+            <button type="submit">Apply</button>
+        </form>
+    </div>
+
+</body>
+</html>
